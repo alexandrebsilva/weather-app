@@ -1,14 +1,22 @@
-const request = require('request')
-const WEATHER_STACK_ACCESS_KEY = '71c91ffb68bbf4e1e8a1367cb565760f'
-const COORDINATES = '-23.5489,-46.6388'
-const BASE_URL_WEATHER_STACK = 'http://api.weatherstack.com/current?access_key=' + WEATHER_STACK_ACCESS_KEY + '&query=' + COORDINATES + '&units=m'
+const geocode = require('./utils/geocode')
+const forecast = require('./utils/forecast')
 
-request({ url: BASE_URL_WEATHER_STACK, json: true }, (error, response) => {
-    if (error) {
-        console.log('Unable to connect to the weather service')
-    } else if (response.body.error) {
-        console.log('Unable to find location')
-    } else {
-        console.log(response.body.current)
-    }
-})
+const address = process.argv[2]
+
+if (!address) {
+    console.log('No location provided')
+} else {
+    geocode(address, (error, data) => {
+        if (error) {
+            return console.log(error)
+        }
+        console.log('Looking for forecast of: ', data.location)
+
+        forecast(data.latitude, data.longitude, (errorForecast, forecast) => {
+            if (error) {
+                return console.log(errorForecast)
+            }
+            console.log(forecast)
+        })
+    })
+}
