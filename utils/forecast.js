@@ -5,15 +5,15 @@ const forecast = (latitude, longitude, callback) => {
     const coordinates = String(latitude) + ',' + String(longitude)
     const url = 'http://api.weatherstack.com/current?access_key=' + WEATHER_STACK_ACCESS_KEY + '&query=' + coordinates + '&units=m'
 
-    request({ url, json: true }, (error, response) => {
+    request({ url, json: true }, (error, { body }) => {
         if (error) {
             callback('Forecast service unavailable', undefined)
-        } else if (response.body.error) {
+        } else if (body.error) {
             callback('Unable to find forecast for given coordinates', undefined)
         } else {
-            callback(undefined, 'The temperature is ' + response.body.current.temperature +
-                ' , humidity of ' + response.body.current.humidity + ' chance of rain aproximately of ' + response.body.current.precip * 100 + '% and feels like ' +
-                response.body.current.feelslike)
+            callback(undefined, 'The temperature is ' + body.current.temperature +
+                ' degrees , humidity of ' + body.current.humidity + ' chance of rain aproximately of ' + body.current.precip * 100 + '% and feels like ' +
+                body.current.feelslike)
         }
     })
 }
